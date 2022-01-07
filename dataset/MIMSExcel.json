@@ -8,12 +8,12 @@
 		"annotations": [],
 		"type": "Excel",
 		"typeProperties": {
-			"sheetName": "11-1-2021 to 11-30-2021",
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"fileName": "Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx",
 				"container": "mims"
 			},
+			"sheetIndex": 0,
 			"firstRowAsHeader": true
 		},
 		"schema": [
