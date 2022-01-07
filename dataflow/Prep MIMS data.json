@@ -1,0 +1,20 @@
+{
+	"name": "Prep MIMS data",
+	"properties": {
+		"type": "WranglingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "MIMSExcel",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~>  MIMSExcel",
+					"dataset": {
+						"referenceName": "MIMSExcel",
+						"type": "DatasetReference"
+					}
+				}
+			],
+			"script": "section Section1;\r\nshared MIMSExcel = let\r\n  AdfDoc = AzureStorage.BlobContents(\"https://smpkpi.blob.core.windows.net/mims/Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx\"),\r\n  Excel = Excel.Workbook(AdfDoc),\r\n  ExcelSheet = Excel{[Item = \"11-1-2021 to 11-30-2021\", Kind = \"Sheet\"]}[Data],\r\n  PromotedHeaders = Table.PromoteHeaders(ExcelSheet, [PromoteAllScalars = true])\r\nin\r\n  PromotedHeaders;\r\nshared UserQuery = let\r\n  Source = MIMSExcel,\r\n  #\"Choose columns\" = Table.SelectColumns(Source, {\"CoopID\", \"CoopName\", \"ProdID\", \"ProdName\", \"ManifestNum\", \"LT_No\", \"CustID\", \"CustName\", \"HaulerID\", \"HaulerName\", \"ScaleHeavy\", \"SchPickUpDate\", \"ActualPickUpDate\", \"SchDeliveryDate\", \"ActualDeliveryDate\", \"RouteNum\", \"Rejected\"}),\r\n  #\"Changed column type\" = Table.TransformColumnTypes(#\"Choose columns\", {{\"ActualPickUpDate\", type datetime}, {\"SchDeliveryDate\", type datetime}, {\"ActualDeliveryDate\", type datetime}, {\"SchPickUpDate\", type datetime}})\r\nin\r\n  #\"Changed column type\";\r\n",
+			"documentLocale": "en-us"
+		}
+	}
+}
