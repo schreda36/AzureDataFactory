@@ -1,0 +1,9 @@
+{
+	"name": "smpkpidatafactory",
+	"location": "southcentralus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "3e22f1cd-34b7-42b4-9214-1b19302eb4b7",
+		"tenantId": "2ea5fe56-6920-4ed5-885d-1ce1331d09e1"
+	}
+}
