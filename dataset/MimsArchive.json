@@ -1,5 +1,5 @@
 {
-	"name": "BinaryDataDestinationStore2",
+	"name": "MimsArchive",
 	"properties": {
 		"description": "Connection to your data destination store.  ",
 		"linkedServiceName": {
@@ -20,7 +20,7 @@
 			"location": {
 				"type": "AzureBlobStorageLocation",
 				"folderPath": {
-					"value": "arhive",
+					"value": "archive",
 					"type": "Expression"
 				},
 				"container": {
