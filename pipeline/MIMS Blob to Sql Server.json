@@ -1,0 +1,262 @@
+{
+	"name": "MIMS Blob to Sql Server",
+	"properties": {
+		"description": "copy MIMS xls to Sql Server",
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ExcelSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						}
+					},
+					"sink": {
+						"type": "SqlServerSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "CoopID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CoopID",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "CoopName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CoopName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ProdID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ProdID",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "ProdName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ProdName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ManifestNum",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ManifestNum",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "LT_No",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "LT_No",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "CustID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustID",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "CustName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "CustName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "HaulerID",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "HaulerID",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "HaulerName",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "HaulerName",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "ScaleHeavy",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ScaleHeavy",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							},
+							{
+								"source": {
+									"name": "SchPickUpDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SchPickUpDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "ActualPickUpDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ActualPickUpDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "SchDeliveryDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "SchDeliveryDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "ActualDeliveryDate",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "ActualDeliveryDate",
+									"type": "DateTime",
+									"physicalType": "datetime"
+								}
+							},
+							{
+								"source": {
+									"name": "RouteNum",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "RouteNum",
+									"type": "String",
+									"physicalType": "nvarchar"
+								}
+							},
+							{
+								"source": {
+									"name": "Rejected",
+									"type": "String",
+									"physicalType": "String"
+								},
+								"sink": {
+									"name": "Rejected",
+									"type": "Double",
+									"physicalType": "float"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "MIMSExcel",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "KPISqlDB",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
