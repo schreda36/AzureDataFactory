@@ -1,0 +1,32 @@
+{
+	"name": "daily_MIMS_archive",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipeline": {
+			"pipelineReference": {
+				"referenceName": "Copy MIMSxls to Archive",
+				"type": "PipelineReference"
+			},
+			"parameters": {
+				"FolderPath_Source": "mims",
+				"FolderPath_Destination": "mims",
+				"Directory_Destination": "archive",
+				"LastModified_From": "@trigger().outputs.windowStartTime",
+				"LastModified_To": "@trigger().outputs.windowEndTime"
+			}
+		},
+		"type": "TumblingWindowTrigger",
+		"typeProperties": {
+			"frequency": "Minute",
+			"interval": 15,
+			"startTime": "2022-01-07T18:48:00Z",
+			"delay": "00:00:00",
+			"maxConcurrency": 50,
+			"retryPolicy": {
+				"intervalInSeconds": 30
+			},
+			"dependsOn": []
+		}
+	}
+}

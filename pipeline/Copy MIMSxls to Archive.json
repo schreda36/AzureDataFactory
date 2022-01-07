@@ -1,10 +1,10 @@
 {
-	"name": "CopyNewFilesByLastModifiedDate",
+	"name": "Copy MIMSxls to Archive",
 	"properties": {
 		"description": "Copy new and changed files only by using LastModifiedDate",
 		"activities": [
 			{
-				"name": "Copy MIMSxls to Sql Server",
+				"name": "Copy MIMSxls to Archive",
 				"description": "Copy new and changed files only by using LastModifiedDate",
 				"type": "Copy",
 				"dependsOn": [],
@@ -31,9 +31,10 @@
 								"type": "Expression"
 							},
 							"wildcardFileName": {
-								"value": "*",
+								"value": "*.xlsx",
 								"type": "Expression"
-							}
+							},
+							"deleteFilesAfterCompletion": false
 						},
 						"formatSettings": {
 							"type": "BinaryReadSettings"
@@ -49,23 +50,17 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "BinaryDataSourceStore2",
+						"referenceName": "MimsRoot",
 						"type": "DatasetReference",
 						"parameters": {
-							"Container": {
-								"value": "@pipeline().parameters.FolderPath_Source",
-								"type": "Expression"
-							},
-							"Directory": {
-								"value": "@pipeline().parameters.Directory_Source",
-								"type": "Expression"
-							}
+							"Container": "@pipeline().parameters.FolderPath_Source",
+							"Directory": "@pipeline().parameters.Directory_Source"
 						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "BinaryDataDestinationStore2",
+						"referenceName": "MimsArchive",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": {
