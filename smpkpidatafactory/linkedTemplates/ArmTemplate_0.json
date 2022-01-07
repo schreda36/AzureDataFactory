@@ -23,10 +23,6 @@
 			"type": "string",
 			"defaultValue": "mims"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_Directory_Destination": {
-			"type": "string",
-			"defaultValue": "archive"
-		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
 			"type": "string",
 			"defaultValue": "@trigger().outputs.windowStartTime"
@@ -473,7 +469,6 @@
 					"parameters": {
 						"FolderPath_Source": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source')]",
 						"FolderPath_Destination": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination')]",
-						"Directory_Destination": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_Directory_Destination')]",
 						"LastModified_From": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_From')]",
 						"LastModified_To": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_To')]"
 					}

@@ -17,9 +17,6 @@
 		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination": {
 			"value": "mims"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_Directory_Destination": {
-			"value": "archive"
-		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
 			"value": "@trigger().outputs.windowStartTime"
 		},
