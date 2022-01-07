@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "smpkpidatafactory"
+		},
+		"KPISqlServer_connectionString": {
+			"value": ""
+		},
+		"smpkpi_connectionString": {
+			"value": ""
+		},
+		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
+			"value": "mims"
+		},
+		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination": {
+			"value": "mims"
+		},
+		"daily_MIMS_archive_properties_pipeline_parameters_Directory_Destination": {
+			"value": "archive"
+		},
+		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
+			"value": "@trigger().outputs.windowStartTime"
+		},
+		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_To": {
+			"value": "@trigger().outputs.windowEndTime"
+		}
+	}
+}
