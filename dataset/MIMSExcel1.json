@@ -1,0 +1,89 @@
+{
+	"name": "MIMSExcel1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "smpkpi",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "archive",
+				"container": "mims"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "CoopID",
+				"type": "String"
+			},
+			{
+				"name": "CoopName",
+				"type": "String"
+			},
+			{
+				"name": "ProdID",
+				"type": "String"
+			},
+			{
+				"name": "ProdName",
+				"type": "String"
+			},
+			{
+				"name": "ManifestNum",
+				"type": "String"
+			},
+			{
+				"name": "LT_No",
+				"type": "String"
+			},
+			{
+				"name": "CustID",
+				"type": "String"
+			},
+			{
+				"name": "CustName",
+				"type": "String"
+			},
+			{
+				"name": "HaulerID",
+				"type": "String"
+			},
+			{
+				"name": "HaulerName",
+				"type": "String"
+			},
+			{
+				"name": "ScaleHeavy",
+				"type": "String"
+			},
+			{
+				"name": "SchPickUpDate",
+				"type": "String"
+			},
+			{
+				"name": "ActualPickUpDate",
+				"type": "String"
+			},
+			{
+				"name": "SchDeliveryDate",
+				"type": "String"
+			},
+			{
+				"name": "ActualDeliveryDate",
+				"type": "String"
+			},
+			{
+				"name": "RouteNum",
+				"type": "String"
+			},
+			{
+				"name": "Rejected",
+				"type": "String"
+			}
+		]
+	}
+}
