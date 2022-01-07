@@ -25,10 +25,7 @@
 						}
 					},
 					"sink": {
-						"type": "BinarySink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
-						}
+						"type": "SqlServerSink"
 					},
 					"enableStaging": false
 				},
@@ -40,12 +37,8 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "MimsRoot",
-						"type": "DatasetReference",
-						"parameters": {
-							"Container": "mims",
-							"Directory": "archive"
-						}
+						"referenceName": "KPISqlDB",
+						"type": "DatasetReference"
 					}
 				]
 			}
