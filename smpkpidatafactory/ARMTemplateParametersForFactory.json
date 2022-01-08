@@ -8,20 +8,23 @@
 		"KPISqlServer_connectionString": {
 			"value": ""
 		},
+		"KPISqlServer_password": {
+			"value": ""
+		},
 		"smpkpi_connectionString": {
 			"value": ""
+		},
+		"KPISqlServer_properties_typeProperties_userName": {
+			"value": "DanS"
 		},
 		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
 			"value": "mims"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination": {
-			"value": "mims"
-		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
-			"value": "@trigger().outputs.windowStartTime"
+			"value": "2022-01-01"
 		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_To": {
-			"value": "@trigger().outputs.windowEndTime"
+			"value": "2022-03-01"
 		}
 	}
 }

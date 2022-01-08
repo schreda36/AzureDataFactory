@@ -11,25 +11,29 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'KPISqlServer'"
 		},
+		"KPISqlServer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'KPISqlServer'"
+		},
 		"smpkpi_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'smpkpi'"
+		},
+		"KPISqlServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "DanS"
 		},
 		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
 			"type": "string",
 			"defaultValue": "mims"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination": {
-			"type": "string",
-			"defaultValue": "mims"
-		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
 			"type": "string",
-			"defaultValue": "@trigger().outputs.windowStartTime"
+			"defaultValue": "2022-01-01"
 		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_To": {
 			"type": "string",
-			"defaultValue": "@trigger().outputs.windowEndTime"
+			"defaultValue": "2022-03-01"
 		}
 	},
 	"variables": {
@@ -61,17 +65,13 @@
 								"type": "BinarySource",
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
+									"recursive": false,
 									"modifiedDatetimeStart": {
 										"value": "@{pipeline().parameters.LastModified_From}",
 										"type": "Expression"
 									},
 									"modifiedDatetimeEnd": {
 										"value": "@{pipeline().parameters.LastModified_To}",
-										"type": "Expression"
-									},
-									"wildcardFileName": {
-										"value": "*.xlsx",
 										"type": "Expression"
 									},
 									"deleteFilesAfterCompletion": false
@@ -90,30 +90,66 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "MimsRoot",
+								"referenceName": "BlobStorageRoot",
 								"type": "DatasetReference",
 								"parameters": {
-									"Container": "@pipeline().parameters.FolderPath_Source",
-									"Directory": "@pipeline().parameters.Directory_Source"
+									"Container": "@pipeline().parameters.FolderPath_Source"
 								}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "MimsArchive",
+								"referenceName": "BlobArchive_Binary",
 								"type": "DatasetReference",
-								"parameters": {
-									"Container": {
-										"value": "@pipeline().parameters.FolderPath_Destination",
-										"type": "Expression"
-									},
-									"Directory": {
-										"value": "@pipeline().parameters.Directory_Destination",
-										"type": "Expression"
-									}
-								}
+								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Cleanup_Archive",
+						"description": "delete \"Processed_\" files, maybe add rule for deleting only \"older than xx/xx\" or limit to 15 latest files",
+						"type": "Delete",
+						"dependsOn": [
+							{
+								"activity": "Copy MIMSxls to Archive",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "BlobArchive_Binary",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"logStorageSettings": {
+								"linkedServiceName": {
+									"referenceName": "smpkpi",
+									"type": "LinkedServiceReference"
+								},
+								"path": "processlogs"
+							},
+							"enableLogging": true,
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": false,
+								"modifiedDatetimeEnd": {
+									"value": "@{addMinutes(pipeline().TriggerTime, -30)}",
+									"type": "Expression"
+								},
+								"wildcardFileName": "*",
+								"enablePartitionDiscovery": false
+							}
+						}
 					}
 				],
 				"policy": {
@@ -125,96 +161,78 @@
 						"type": "String",
 						"defaultValue": "sourcefolder"
 					},
-					"Directory_Source": {
-						"type": "String",
-						"defaultValue": "subfolder"
-					},
-					"FolderPath_Destination": {
-						"type": "String",
-						"defaultValue": "destinationfolder"
-					},
-					"Directory_Destination": {
-						"type": "String",
-						"defaultValue": "subfolder"
-					},
 					"LastModified_From": {
 						"type": "String",
-						"defaultValue": "2019-02-01T00:00:00Z"
+						"defaultValue": "2022-01-01T00:00:00Z"
 					},
 					"LastModified_To": {
 						"type": "String",
-						"defaultValue": "2019-03-01T00:00:00Z"
+						"defaultValue": "2099-03-01T00:00:00Z"
 					}
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/MimsRoot')]",
-				"[concat(variables('factoryId'), '/datasets/MimsArchive')]"
+				"[concat(variables('factoryId'), '/datasets/BlobStorageRoot')]",
+				"[concat(variables('factoryId'), '/datasets/BlobArchive_Binary')]",
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MIMS Blob to Sql Server')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/BlobArchive_Binary')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "copy MIMS xls to Sql Server",
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "ExcelSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								}
-							},
-							"sink": {
-								"type": "SqlServerSink"
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "MIMSExcel",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "KPISqlDB",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
+				"linkedServiceName": {
+					"referenceName": "smpkpi",
+					"type": "LinkedServiceReference"
 				},
-				"annotations": []
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "archive"
+					}
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]",
-				"[concat(variables('factoryId'), '/datasets/KPISqlDB')]"
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/KPISqlDB')]",
+			"name": "[concat(parameters('factoryName'), '/BlobStorageRoot')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data source store. ",
+				"linkedServiceName": {
+					"referenceName": "smpkpi",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Container": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": {
+							"value": "@dataset().Container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/KPISqlDBtblService')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -235,7 +253,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MIMSExcel')]",
+			"name": "[concat(parameters('factoryName'), '/MIMSExcel_Nov30_2021')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -339,14 +357,6 @@
 					"referenceName": "smpkpi",
 					"type": "LinkedServiceReference"
 				},
-				"parameters": {
-					"Container": {
-						"type": "string"
-					},
-					"Directory": {
-						"type": "string"
-					}
-				},
 				"annotations": [],
 				"type": "Binary",
 				"typeProperties": {
@@ -357,41 +367,7 @@
 							"type": "Expression"
 						},
 						"container": {
-							"value": "@dataset().Container",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MimsRoot')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your data source store. ",
-				"linkedServiceName": {
-					"referenceName": "smpkpi",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Container": {
-						"type": "string"
-					},
-					"Directory": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": {
-							"value": "@dataset().Container",
+							"value": "mims",
 							"type": "Expression"
 						}
 					}
@@ -410,7 +386,12 @@
 				"annotations": [],
 				"type": "SqlServer",
 				"typeProperties": {
-					"connectionString": "[parameters('KPISqlServer_connectionString')]"
+					"connectionString": "[parameters('KPISqlServer_connectionString')]",
+					"userName": "[parameters('KPISqlServer_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('KPISqlServer_password')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -434,6 +415,7 @@
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "auto archive",
 				"annotations": [],
 				"runtimeState": "Started",
 				"pipeline": {
@@ -443,7 +425,6 @@
 					},
 					"parameters": {
 						"FolderPath_Source": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source')]",
-						"FolderPath_Destination": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination')]",
 						"LastModified_From": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_From')]",
 						"LastModified_To": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_To')]"
 					}
@@ -466,6 +447,26 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/integrationRuntimeAzure')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 10,
+							"cleanup": false
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Prep MIMS data')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -477,18 +478,30 @@
 							"name": "MIMSExcel",
 							"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> MIMSExcel",
 							"dataset": {
-								"referenceName": "MIMSExcel",
+								"referenceName": "MIMSExcel_Nov30_2021",
 								"type": "DatasetReference"
 							}
 						}
 					],
-					"script": "section Section1;\r\nshared MIMSExcel = let\r\n  AdfDoc = AzureStorage.BlobContents(\"https://smpkpi.blob.core.windows.net/mims/Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx\"),\r\n  Excel = Excel.Workbook(AdfDoc),\r\n  ExcelSheet = Excel{[Item = \"11-1-2021 to 11-30-2021\", Kind = \"Sheet\"]}[Data],\r\n  PromotedHeaders = Table.PromoteHeaders(ExcelSheet, [PromoteAllScalars = true])\r\nin\r\n  PromotedHeaders;\r\nshared UserQuery = let\r\n  Source = MIMSExcel,\r\n  #\"Choose columns\" = Table.SelectColumns(Source, {\"CoopID\", \"CoopName\", \"ProdID\", \"ProdName\", \"ManifestNum\", \"LT_No\", \"CustID\", \"CustName\", \"HaulerID\", \"HaulerName\", \"ScaleHeavy\", \"SchPickUpDate\", \"ActualPickUpDate\", \"SchDeliveryDate\", \"ActualDeliveryDate\", \"RouteNum\", \"Rejected\"}),\r\n  #\"Changed column type\" = Table.TransformColumnTypes(#\"Choose columns\", {{\"ActualPickUpDate\", type datetime}, {\"SchDeliveryDate\", type datetime}, {\"ActualDeliveryDate\", type datetime}, {\"SchPickUpDate\", type datetime}})\r\nin\r\n  #\"Changed column type\";\r\n",
+					"script": "section Section1;\r\nshared MIMSExcel_Nov30_2021 = let\r\n  AdfDoc = AzureStorage.BlobContents(\"https://smpkpi.blob.core.windows.net/mims/Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx\"),\r\n  Excel = Excel.Workbook(AdfDoc),\r\n  ExcelSheet = Excel{[Item=Excel{0}[Item],Kind=\"Sheet\"]}[Data],\r\n  PromotedHeaders = Table.PromoteHeaders(ExcelSheet, [PromoteAllScalars = true])\r\nin\r\n  PromotedHeaders;\r\nshared UserQuery = let\r\n  Source = MIMSExcel_Nov30_2021\r\nin\r\n  Source;\r\n",
 					"documentLocale": "en-us"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]"
+				"[concat(variables('factoryId'), '/datasets/MIMSExcel_Nov30_2021')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ADcredential')]",
+			"type": "Microsoft.DataFactory/factories/credentials",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {
+					"resourceId": "/subscriptions/5e4be3e5-0651-45cc-928f-1d9067cc4e52/resourcegroups/AOP/providers/Microsoft.ManagedIdentity/userAssignedIdentities/SMPKPIDataFactoryManagedIdentity"
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }

@@ -11,25 +11,29 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'KPISqlServer'"
 		},
+		"KPISqlServer_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'KPISqlServer'"
+		},
 		"smpkpi_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'smpkpi'"
+		},
+		"KPISqlServer_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "DanS"
 		},
 		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
 			"type": "string",
 			"defaultValue": "mims"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination": {
-			"type": "string",
-			"defaultValue": "mims"
-		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
 			"type": "string",
-			"defaultValue": "@trigger().outputs.windowStartTime"
+			"defaultValue": "2022-01-01"
 		},
 		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_To": {
 			"type": "string",
-			"defaultValue": "@trigger().outputs.windowEndTime"
+			"defaultValue": "2022-03-01"
 		},
 		"containerUri": {
 			"type": "string",
@@ -61,14 +65,17 @@
 					"KPISqlServer_connectionString": {
 						"value": "[parameters('KPISqlServer_connectionString')]"
 					},
+					"KPISqlServer_password": {
+						"value": "[parameters('KPISqlServer_password')]"
+					},
 					"smpkpi_connectionString": {
 						"value": "[parameters('smpkpi_connectionString')]"
 					},
+					"KPISqlServer_properties_typeProperties_userName": {
+						"value": "[parameters('KPISqlServer_properties_typeProperties_userName')]"
+					},
 					"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
 						"value": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source')]"
-					},
-					"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination": {
-						"value": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Destination')]"
 					},
 					"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
 						"value": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_From')]"
