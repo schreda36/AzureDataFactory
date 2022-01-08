@@ -111,17 +111,13 @@
 				"type": "String",
 				"defaultValue": "sourcefolder"
 			},
-			"FolderPath_Destination": {
-				"type": "String",
-				"defaultValue": "destinationfolder"
-			},
 			"LastModified_From": {
 				"type": "String",
-				"defaultValue": "2019-02-01T00:00:00Z"
+				"defaultValue": "2022-01-01T00:00:00Z"
 			},
 			"LastModified_To": {
 				"type": "String",
-				"defaultValue": "2022-03-01T00:00:00Z"
+				"defaultValue": "2099-03-01T00:00:00Z"
 			}
 		},
 		"annotations": []
