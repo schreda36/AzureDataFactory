@@ -9,9 +9,6 @@
 		"parameters": {
 			"Container": {
 				"type": "string"
-			},
-			"Directory": {
-				"type": "string"
 			}
 		},
 		"annotations": [],
