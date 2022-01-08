@@ -159,27 +159,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/KPISqlDBtblService')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "KPISqlServer",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "dbo",
-					"table": "Stage_tblService"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/KPISqlServer')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/MIMSExcel_Nov30_2021')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
