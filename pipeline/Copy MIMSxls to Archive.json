@@ -21,7 +21,7 @@
 						"type": "BinarySource",
 						"storeSettings": {
 							"type": "AzureBlobStorageReadSettings",
-							"recursive": true,
+							"recursive": false,
 							"modifiedDatetimeStart": {
 								"value": "@{pipeline().parameters.LastModified_From}",
 								"type": "Expression"
@@ -98,7 +98,11 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "MimsArchive",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "@pipeline().parameters.FolderPath_Destination",
+							"Directory": "@pipeline().parameters.Directory_Destination"
+						}
 					},
 					"logStorageSettings": {
 						"linkedServiceName": {
@@ -112,11 +116,11 @@
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": false,
 						"modifiedDatetimeEnd": {
-							"value": "@{adddays(pipeline().TriggerTime, -1)}",
+							"value": "@{addMinutes(pipeline().TriggerTime, -30)}",
 							"type": "Expression"
 						},
-						"wildcardFileName": "*",
-						"enablePartitionDiscovery": false
+						"enablePartitionDiscovery": false,
+						"prefix": "Processed_"
 					}
 				}
 			}
