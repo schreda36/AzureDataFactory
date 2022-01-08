@@ -100,7 +100,7 @@
 							"value": "@{addMinutes(pipeline().TriggerTime, -30)}",
 							"type": "Expression"
 						},
-						"wildcardFileName": "Processed_*",
+						"wildcardFileName": "*",
 						"enablePartitionDiscovery": false
 					}
 				}
