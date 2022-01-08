@@ -4,18 +4,6 @@
 		"description": "auto archive",
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipeline": {
-			"pipelineReference": {
-				"referenceName": "Copy MIMSxls to Archive",
-				"type": "PipelineReference"
-			},
-			"parameters": {
-				"FolderPath_Source": "mims",
-				"FolderPath_Destination": "mims",
-				"LastModified_From": "@trigger().outputs.windowStartTime",
-				"LastModified_To": "@trigger().outputs.windowEndTime"
-			}
-		},
 		"type": "TumblingWindowTrigger",
 		"typeProperties": {
 			"frequency": "Minute",
