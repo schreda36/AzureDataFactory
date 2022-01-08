@@ -1,8 +1,9 @@
 {
 	"name": "daily_MIMS_archive",
 	"properties": {
+		"description": "auto archive",
 		"annotations": [],
-		"runtimeState": "Stopped",
+		"runtimeState": "Started",
 		"pipeline": {
 			"pipelineReference": {
 				"referenceName": "Copy MIMSxls to Archive",
