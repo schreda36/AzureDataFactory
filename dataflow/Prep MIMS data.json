@@ -13,7 +13,7 @@
 					}
 				}
 			],
-			"script": "section Section1;\r\nshared MIMSExcel_Nov30_2021 = let\r\n  AdfDoc = AzureStorage.BlobContents(\"https://smpkpi.blob.core.windows.net/mims/Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx\"),\r\n  Excel = Excel.Workbook(AdfDoc),\r\n  ExcelSheet = Excel{[Item=Excel{0}[Item],Kind=\"Sheet\"]}[Data],\r\n  PromotedHeaders = Table.PromoteHeaders(ExcelSheet, [PromoteAllScalars = true]),\r\n  #\"Choose columns\" = Table.SelectColumns(PromotedHeaders, {\"CoopID\", \"CoopName\", \"ProdID\", \"ProdName\", \"ManifestNum\", \"LT_No\", \"CustID\", \"CustName\", \"HaulerID\", \"HaulerName\", \"ScaleHeavy\", \"SchPickUpDate\", \"ActualPickUpDate\", \"SchDeliveryDate\", \"ActualDeliveryDate\", \"RouteNum\", \"Rejected\"}),\r\n  #\"Changed column type\" = Table.TransformColumnTypes(#\"Choose columns\", {{\"ActualPickUpDate\", type datetime}})\r\nin\r\n  #\"Changed column type\";\r\n",
+			"script": "section Section1;\r\nshared MIMSExcel_Nov30_2021 = let\r\n  AdfDoc = AzureStorage.BlobContents(\"https://smpkpi.blob.core.windows.net/mims/Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx\"),\r\n  Excel = Excel.Workbook(AdfDoc),\r\n  ExcelSheet = Excel{[Item=Excel{0}[Item],Kind=\"Sheet\"]}[Data],\r\n  PromotedHeaders = Table.PromoteHeaders(ExcelSheet, [PromoteAllScalars = true])\r\nin\r\n  PromotedHeaders;\r\nshared UserQuery = let\r\n  Source = MIMSExcel_Nov30_2021\r\nin\r\n  Source;\r\n",
 			"documentLocale": "en-us"
 		}
 	}
