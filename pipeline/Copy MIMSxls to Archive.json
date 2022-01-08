@@ -53,25 +53,14 @@
 						"referenceName": "BlobStorageRoot",
 						"type": "DatasetReference",
 						"parameters": {
-							"Container": "@pipeline().parameters.FolderPath_Source",
-							"Directory": "@pipeline().parameters.Directory_Source"
+							"Container": "@pipeline().parameters.FolderPath_Source"
 						}
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "MimsArchive",
-						"type": "DatasetReference",
-						"parameters": {
-							"Container": {
-								"value": "@pipeline().parameters.FolderPath_Destination",
-								"type": "Expression"
-							},
-							"Directory": {
-								"value": "@pipeline().parameters.Directory_Destination",
-								"type": "Expression"
-							}
-						}
+						"referenceName": "BlobArchive_Binary",
+						"type": "DatasetReference"
 					}
 				]
 			},
@@ -97,12 +86,8 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataset": {
-						"referenceName": "MimsArchive",
-						"type": "DatasetReference",
-						"parameters": {
-							"Container": "@pipeline().parameters.FolderPath_Destination",
-							"Directory": "@pipeline().parameters.Directory_Destination"
-						}
+						"referenceName": "BlobArchive_Binary",
+						"type": "DatasetReference"
 					},
 					"logStorageSettings": {
 						"linkedServiceName": {
@@ -116,7 +101,7 @@
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": false,
 						"modifiedDatetimeEnd": {
-							"value": "@{addMinutes(pipeline().TriggerTime, -30)}",
+							"value": "@{addMinutes(pipeline().TriggerTime, -3)}",
 							"type": "Expression"
 						},
 						"enablePartitionDiscovery": false,
