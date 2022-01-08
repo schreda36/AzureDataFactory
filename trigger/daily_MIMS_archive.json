@@ -6,7 +6,7 @@
 		"runtimeState": "Started",
 		"pipeline": {
 			"pipelineReference": {
-				"referenceName": "Copy MIMSxls to Archive",
+				"referenceName": "Copy Source to Archive",
 				"type": "PipelineReference"
 			},
 			"parameters": {
