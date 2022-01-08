@@ -1,5 +1,5 @@
 {
-	"name": "KPISqlDB",
+	"name": "KPISqlDBtblService",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "KPISqlServer",
