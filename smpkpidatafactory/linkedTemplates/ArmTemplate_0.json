@@ -284,7 +284,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Copy MIMSxls to Archive')]",
+			"name": "[concat(parameters('factoryName'), '/Copy Source to Archive')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -386,7 +386,7 @@
 								"type": "AzureBlobStorageReadSettings",
 								"recursive": false,
 								"modifiedDatetimeEnd": {
-									"value": "@{addMinutes(pipeline().TriggerTime, -30)}",
+									"value": "@{addDays(pipeline().TriggerTime, -30)}",
 									"type": "Expression"
 								},
 								"wildcardFileName": "*",
@@ -456,7 +456,7 @@
 				"runtimeState": "Started",
 				"pipeline": {
 					"pipelineReference": {
-						"referenceName": "Copy MIMSxls to Archive",
+						"referenceName": "Copy Source to Archive",
 						"type": "PipelineReference"
 					},
 					"parameters": {
@@ -479,7 +479,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Copy MIMSxls to Archive')]"
+				"[concat(variables('factoryId'), '/pipelines/Copy Source to Archive')]"
 			]
 		}
 	]
