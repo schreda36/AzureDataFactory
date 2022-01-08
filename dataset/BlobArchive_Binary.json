@@ -1,5 +1,5 @@
 {
-	"name": "Archive_Binary",
+	"name": "BlobArchive_Binary",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "smpkpi",
