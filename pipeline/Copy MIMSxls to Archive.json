@@ -97,7 +97,7 @@
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": false,
 						"modifiedDatetimeEnd": {
-							"value": "@{addMinutes(pipeline().TriggerTime, -30)}",
+							"value": "@{addDays(pipeline().TriggerTime, -30)}",
 							"type": "Expression"
 						},
 						"wildcardFileName": "*",
