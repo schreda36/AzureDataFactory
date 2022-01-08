@@ -30,10 +30,6 @@
 								"value": "@{pipeline().parameters.LastModified_To}",
 								"type": "Expression"
 							},
-							"wildcardFileName": {
-								"value": "*.xlsx",
-								"type": "Expression"
-							},
 							"deleteFilesAfterCompletion": false
 						},
 						"formatSettings": {
@@ -101,11 +97,11 @@
 						"type": "AzureBlobStorageReadSettings",
 						"recursive": false,
 						"modifiedDatetimeEnd": {
-							"value": "@{addMinutes(pipeline().TriggerTime, -3)}",
+							"value": "@{addMinutes(pipeline().TriggerTime, -30)}",
 							"type": "Expression"
 						},
-						"enablePartitionDiscovery": false,
-						"prefix": "Processed_"
+						"wildcardFileName": "Processed_*",
+						"enablePartitionDiscovery": false
 					}
 				}
 			}
