@@ -1,5 +1,5 @@
 {
-	"name": "MimsRoot",
+	"name": "BlobStorageRoot",
 	"properties": {
 		"description": "Connection to your data source store. ",
 		"linkedServiceName": {

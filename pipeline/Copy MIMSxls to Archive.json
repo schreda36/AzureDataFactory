@@ -50,7 +50,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "MimsRoot",
+						"referenceName": "BlobStorageRoot",
 						"type": "DatasetReference",
 						"parameters": {
 							"Container": "@pipeline().parameters.FolderPath_Source",
