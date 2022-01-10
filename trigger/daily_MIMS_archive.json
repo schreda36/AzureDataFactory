@@ -4,17 +4,6 @@
 		"description": "auto archive",
 		"annotations": [],
 		"runtimeState": "Stopped",
-		"pipeline": {
-			"pipelineReference": {
-				"referenceName": "Copy Source to Archive",
-				"type": "PipelineReference"
-			},
-			"parameters": {
-				"FolderPath_Source": "mims",
-				"LastModified_From": "2022-01-01",
-				"LastModified_To": "2022-03-01"
-			}
-		},
 		"type": "TumblingWindowTrigger",
 		"typeProperties": {
 			"frequency": "Minute",
