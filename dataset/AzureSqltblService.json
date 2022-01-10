@@ -88,6 +88,11 @@
 				"name": "Rejected",
 				"type": "float",
 				"precision": 15
+			},
+			{
+				"name": "ServiceID",
+				"type": "int",
+				"precision": 10
 			}
 		],
 		"typeProperties": {
