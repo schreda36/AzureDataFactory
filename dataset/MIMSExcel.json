@@ -1,5 +1,5 @@
 {
-	"name": "MIMSExcel_Nov30_2021",
+	"name": "MIMSExcel",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "smpkpi",
