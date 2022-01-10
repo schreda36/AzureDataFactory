@@ -1,0 +1,29 @@
+{
+	"name": "hourly_mims_archive",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Copy Source to Archive",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"FolderPath_Source": "mims",
+					"LastModified_From": "2022-01-01",
+					"LastModified_To": "2099-01-01"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Hour",
+				"interval": 1,
+				"startTime": "2022-01-10T15:00:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
