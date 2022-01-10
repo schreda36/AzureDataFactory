@@ -8,7 +8,7 @@
 					"name": "MIMSExcel",
 					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> MIMSExcel",
 					"dataset": {
-						"referenceName": "MIMSExcel_Nov30_2021",
+						"referenceName": "MIMSExcel",
 						"type": "DatasetReference"
 					}
 				}
