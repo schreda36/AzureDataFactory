@@ -396,7 +396,7 @@
 			"properties": {
 				"description": "auto archive",
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipeline": {
 					"pipelineReference": {
 						"referenceName": "Copy Source to Archive",
