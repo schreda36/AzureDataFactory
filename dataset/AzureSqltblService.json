@@ -1,0 +1,98 @@
+{
+	"name": "AzureSqltblService",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "KPISqlDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "CoopID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CoopName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProdID",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "ProdName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ManifestNum",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LT_No",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CustID",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "CustName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HaulerID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "HaulerName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ScaleHeavy",
+				"type": "float",
+				"precision": 15
+			},
+			{
+				"name": "SchPickUpDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ActualPickUpDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "SchDeliveryDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ActualDeliveryDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RouteNum",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Rejected",
+				"type": "float",
+				"precision": 15
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Stage_tblService"
+		}
+	}
+}
