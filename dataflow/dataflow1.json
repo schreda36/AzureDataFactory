@@ -12,9 +12,13 @@
 					"name": "MIMSservice"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"name": "tblService"
+				}
+			],
 			"transformations": [],
-			"script": "source(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as integer,\n\t\tProdName as string,\n\t\tManifestNum as integer,\n\t\tLT_No as integer,\n\t\tCustID as integer,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as integer,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'DataSource',\n\twildcardPaths:['*.xlsx']) ~> MIMSservice"
+			"script": "source(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as integer,\n\t\tProdName as string,\n\t\tManifestNum as integer,\n\t\tLT_No as integer,\n\t\tCustID as integer,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as integer,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'DataSource',\n\twildcardPaths:['*.xlsx']) ~> MIMSservice\nMIMSservice sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> tblService"
 		}
 	}
 }
