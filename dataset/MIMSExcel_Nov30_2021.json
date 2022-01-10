@@ -10,7 +10,6 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx",
 				"container": "mims"
 			},
 			"sheetIndex": 0,
