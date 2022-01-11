@@ -28,10 +28,7 @@
 						"referenceName": "MIMS to tblService",
 						"type": "DataFlowReference",
 						"parameters": {
-							"Datasource": {
-								"value": "@activty('Get File Metadata').output.itemName",
-								"type": "Expression"
-							}
+							"Datasource": "@activty('Get File Metadata').output.itemName"
 						}
 					},
 					"compute": {
