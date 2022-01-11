@@ -54,7 +54,7 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"Datasource": {
-								"value": "'@{activity('Get File Metadata').output.itemName}'",
+								"value": "@activity('Get File Metadata').output.itemName",
 								"type": "Expression"
 							}
 						}
