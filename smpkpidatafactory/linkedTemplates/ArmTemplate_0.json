@@ -247,6 +247,12 @@
 					{
 						"name": "Datasource",
 						"type": "nvarchar"
+					},
+					{
+						"name": "Updated",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
 				],
 				"typeProperties": {
@@ -602,8 +608,12 @@
 							}
 						}
 					],
-					"transformations": [],
-					"script": "parameters{\n\tDatasource as string\n}\nsource(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as float,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as float,\n\t\tCustID as float,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as float,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp 'yyyy-MM-dd',\n\t\tRouteNum as string,\n\t\tRejected as float\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'Datasource',\n\twildcardPaths:['*.xlsx']) ~> MIMSservice\nMIMSservice sink(allowSchemaDrift: false,\n\tvalidateSchema: true,\n\tinput(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as double,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as double,\n\t\tCustID as double,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as double,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as double,\n\t\tServiceID as integer,\n\t\tDatasource as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tdateFormat:'yyyy-mm-dd',\n\ttimestampFormat:'00:00:00',\n\tbooleanFormat: ['1', '0'],\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'allErrors',\n\toutputRejectedData: true,\n\trejectedData_container: 'processlogs',\n\trejectedData_folderPath: 'rejectedRecords',\n\ttransactionCommit: 'single',\n\treportSuccessOnError: true,\n\tmapColumn(\n\t\tCoopID,\n\t\tCoopName,\n\t\tProdID,\n\t\tProdName,\n\t\tManifestNum,\n\t\tLT_No,\n\t\tCustID,\n\t\tCustName,\n\t\tHaulerID,\n\t\tHaulerName,\n\t\tScaleHeavy,\n\t\tSchPickUpDate,\n\t\tActualPickUpDate,\n\t\tSchDeliveryDate,\n\t\tActualDeliveryDate,\n\t\tRouteNum,\n\t\tRejected,\n\t\tDatasource\n\t)) ~> tblService"
+					"transformations": [
+						{
+							"name": "UpdatedTimestamp"
+						}
+					],
+					"script": "parameters{\n\tDatasource as string\n}\nsource(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as float,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as float,\n\t\tCustID as float,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as float,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp 'yyyy-MM-dd',\n\t\tRouteNum as string,\n\t\tRejected as float\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'Datasource',\n\twildcardPaths:['*.xlsx']) ~> MIMSservice\nMIMSservice derive(Updated = currentTimestamp()) ~> UpdatedTimestamp\nUpdatedTimestamp sink(allowSchemaDrift: false,\n\tvalidateSchema: true,\n\tinput(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as double,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as double,\n\t\tCustID as double,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as double,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as double,\n\t\tServiceID as integer,\n\t\tDatasource as string,\n\t\tUpdated as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tdateFormat:'yyyy-mm-dd',\n\ttimestampFormat:'00:00:00',\n\tbooleanFormat: ['1', '0'],\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'allErrors',\n\toutputRejectedData: true,\n\trejectedData_container: 'processlogs',\n\trejectedData_folderPath: 'rejectedRecords',\n\ttransactionCommit: 'single',\n\treportSuccessOnError: true,\n\tmapColumn(\n\t\tCoopID,\n\t\tCoopName,\n\t\tProdID,\n\t\tProdName,\n\t\tManifestNum,\n\t\tLT_No,\n\t\tCustID,\n\t\tCustName,\n\t\tHaulerID,\n\t\tHaulerName,\n\t\tScaleHeavy,\n\t\tSchPickUpDate,\n\t\tActualPickUpDate,\n\t\tSchDeliveryDate,\n\t\tActualDeliveryDate,\n\t\tRouteNum,\n\t\tRejected,\n\t\tDatasource,\n\t\tUpdated\n\t)) ~> tblService"
 				}
 			},
 			"dependsOn": [
@@ -724,93 +734,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]",
 				"[concat(variables('factoryId'), '/dataflows/MIMS to tblService')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MIMS to Sql Server_old')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "process MIMS xls from blob to SqlDB tblService",
-				"activities": [
-					{
-						"name": "MIMS to tblService",
-						"description": "processes MIMS xls to tblService",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [
-							{
-								"activity": "Get File Metadata",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "1.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "MIMS to tblService",
-								"type": "DataFlowReference",
-								"parameters": {
-									"Datasource": "'test'"
-								},
-								"datasetParameters": {
-									"MIMSservice": {},
-									"tblService": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					},
-					{
-						"name": "Get File Metadata",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "MIMSExcel",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"fieldList": [
-								"itemName"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/MIMS to tblService')]",
-				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]"
 			]
 		},
 		{
