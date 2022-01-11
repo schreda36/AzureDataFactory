@@ -1,5 +1,5 @@
 {
-	"name": "MIMS to Sql Server_copy1",
+	"name": "MIMS to Sql Server",
 	"properties": {
 		"description": "process MIMS xls from blob to SqlDB tblService",
 		"activities": [
