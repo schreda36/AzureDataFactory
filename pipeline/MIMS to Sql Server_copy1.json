@@ -26,7 +26,13 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "MIMS to tblService",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"Datasource": {
+								"value": "@activty('Get File Metadata').output.itemName",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -53,7 +59,7 @@
 						"type": "DatasetReference"
 					},
 					"fieldList": [
-						"childItems"
+						"itemName"
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
@@ -62,11 +68,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"Datasource": {
-				"type": "string"
-			}
-		},
 		"annotations": []
 	}
 }
