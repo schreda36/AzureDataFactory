@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "smpkpidatafactory"
 		},
+		"KPISqlDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'KPISqlDB'"
+		},
 		"KPISqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'KPISqlServer'"
@@ -23,17 +27,17 @@
 			"type": "string",
 			"defaultValue": "DanS"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
+		"hourly_mims_archive_properties_Copy Source to Archive_parameters_FolderPath_Source": {
 			"type": "string",
 			"defaultValue": "mims"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
+		"hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_From": {
 			"type": "string",
 			"defaultValue": "2022-01-01"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_To": {
+		"hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_To": {
 			"type": "string",
-			"defaultValue": "2022-03-01"
+			"defaultValue": "2099-01-01"
 		},
 		"containerUri": {
 			"type": "string",
@@ -62,6 +66,9 @@
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
 					},
+					"KPISqlDB_connectionString": {
+						"value": "[parameters('KPISqlDB_connectionString')]"
+					},
 					"KPISqlServer_connectionString": {
 						"value": "[parameters('KPISqlServer_connectionString')]"
 					},
@@ -74,14 +81,14 @@
 					"KPISqlServer_properties_typeProperties_userName": {
 						"value": "[parameters('KPISqlServer_properties_typeProperties_userName')]"
 					},
-					"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
-						"value": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source')]"
+					"hourly_mims_archive_properties_Copy Source to Archive_parameters_FolderPath_Source": {
+						"value": "[parameters('hourly_mims_archive_properties_Copy Source to Archive_parameters_FolderPath_Source')]"
 					},
-					"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
-						"value": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_From')]"
+					"hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_From": {
+						"value": "[parameters('hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_From')]"
 					},
-					"daily_MIMS_archive_properties_pipeline_parameters_LastModified_To": {
-						"value": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_To')]"
+					"hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_To": {
+						"value": "[parameters('hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_To')]"
 					}
 				}
 			},

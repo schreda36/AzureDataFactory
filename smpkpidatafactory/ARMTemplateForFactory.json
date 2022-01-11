@@ -7,6 +7,10 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "smpkpidatafactory"
 		},
+		"KPISqlDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'KPISqlDB'"
+		},
 		"KPISqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'KPISqlServer'"
@@ -23,17 +27,17 @@
 			"type": "string",
 			"defaultValue": "DanS"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source": {
+		"hourly_mims_archive_properties_Copy Source to Archive_parameters_FolderPath_Source": {
 			"type": "string",
 			"defaultValue": "mims"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_From": {
+		"hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_From": {
 			"type": "string",
 			"defaultValue": "2022-01-01"
 		},
-		"daily_MIMS_archive_properties_pipeline_parameters_LastModified_To": {
+		"hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_To": {
 			"type": "string",
-			"defaultValue": "2022-03-01"
+			"defaultValue": "2099-01-01"
 		}
 	},
 	"variables": {
@@ -179,6 +183,294 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/MIMS to Sql Server')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "process MIMS xls from blob to SqlDB tblService",
+				"activities": [
+					{
+						"name": "Get File Metadata",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "MIMSExcel",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"itemName"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					},
+					{
+						"name": "MIMS to tblService",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Get File Metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "MIMS to tblService",
+								"type": "DataFlowReference",
+								"parameters": {
+									"Datasource": {
+										"value": "@activity('Get File Metadata').output.itemName",
+										"type": "Expression"
+									}
+								},
+								"datasetParameters": {
+									"MIMSservice": {},
+									"tblService": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]",
+				"[concat(variables('factoryId'), '/dataflows/MIMS to tblService')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MIMS to Sql Server_old')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "process MIMS xls from blob to SqlDB tblService",
+				"activities": [
+					{
+						"name": "MIMS to tblService",
+						"description": "processes MIMS xls to tblService",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [
+							{
+								"activity": "Get File Metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "MIMS to tblService",
+								"type": "DataFlowReference",
+								"parameters": {
+									"Datasource": "'test'"
+								},
+								"datasetParameters": {
+									"MIMSservice": {},
+									"tblService": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					},
+					{
+						"name": "Get File Metadata",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "MIMSExcel",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"itemName"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/MIMS to tblService')]",
+				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqltblService')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "KPISqlDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CoopID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CoopName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProdID",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "ProdName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ManifestNum",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LT_No",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "CustID",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "CustName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "HaulerID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "HaulerName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ScaleHeavy",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "SchPickUpDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ActualPickUpDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "SchDeliveryDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ActualDeliveryDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RouteNum",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Rejected",
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "ServiceID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Datasource",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Stage_tblService"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/KPISqlDB')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/BlobArchive_Binary')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -232,7 +524,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MIMSExcel_Nov30_2021')]",
+			"name": "[concat(parameters('factoryName'), '/MIMSExcel')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -245,7 +537,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx",
 						"container": "mims"
 					},
 					"sheetIndex": 0,
@@ -357,6 +648,19 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/KPISqlDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('KPISqlDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/KPISqlServer')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -397,17 +701,6 @@
 				"description": "auto archive",
 				"annotations": [],
 				"runtimeState": "Stopped",
-				"pipeline": {
-					"pipelineReference": {
-						"referenceName": "Copy Source to Archive",
-						"type": "PipelineReference"
-					},
-					"parameters": {
-						"FolderPath_Source": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_FolderPath_Source')]",
-						"LastModified_From": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_From')]",
-						"LastModified_To": "[parameters('daily_MIMS_archive_properties_pipeline_parameters_LastModified_To')]"
-					}
-				},
 				"type": "TumblingWindowTrigger",
 				"typeProperties": {
 					"frequency": "Minute",
@@ -419,6 +712,38 @@
 						"intervalInSeconds": 30
 					},
 					"dependsOn": []
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/hourly_mims_archive')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Copy Source to Archive",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"FolderPath_Source": "[parameters('hourly_mims_archive_properties_Copy Source to Archive_parameters_FolderPath_Source')]",
+							"LastModified_From": "[parameters('hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_From')]",
+							"LastModified_To": "[parameters('hourly_mims_archive_properties_Copy Source to Archive_parameters_LastModified_To')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Hour",
+						"interval": 1,
+						"startTime": "2022-01-10T15:00:00Z",
+						"timeZone": "UTC"
+					}
 				}
 			},
 			"dependsOn": [
@@ -446,6 +771,45 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/MIMS to tblService')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "MIMSExcel",
+								"type": "DatasetReference"
+							},
+							"name": "MIMSservice"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqltblService",
+								"type": "DatasetReference"
+							},
+							"name": "tblService",
+							"rejectedDataLinkedService": {
+								"referenceName": "smpkpi",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [],
+					"script": "parameters{\n\tDatasource as string\n}\nsource(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as float,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as float,\n\t\tCustID as float,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as float,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp 'yyyy-MM-dd',\n\t\tRouteNum as string,\n\t\tRejected as float\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'Datasource',\n\twildcardPaths:['*.xlsx']) ~> MIMSservice\nMIMSservice sink(allowSchemaDrift: false,\n\tvalidateSchema: true,\n\tinput(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as double,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as double,\n\t\tCustID as double,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as double,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as double,\n\t\tServiceID as integer,\n\t\tDatasource as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tdateFormat:'yyyy-mm-dd',\n\ttimestampFormat:'00:00:00',\n\tbooleanFormat: ['1', '0'],\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'allErrors',\n\toutputRejectedData: true,\n\trejectedData_container: 'processlogs',\n\trejectedData_folderPath: 'rejectedRecords',\n\ttransactionCommit: 'single',\n\treportSuccessOnError: true,\n\tmapColumn(\n\t\tCoopID,\n\t\tCoopName,\n\t\tProdID,\n\t\tProdName,\n\t\tManifestNum,\n\t\tLT_No,\n\t\tCustID,\n\t\tCustName,\n\t\tHaulerID,\n\t\tHaulerName,\n\t\tScaleHeavy,\n\t\tSchPickUpDate,\n\t\tActualPickUpDate,\n\t\tSchDeliveryDate,\n\t\tActualDeliveryDate,\n\t\tRouteNum,\n\t\tRejected,\n\t\tDatasource\n\t)) ~> tblService"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqltblService')]",
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/Prep MIMS data')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -457,7 +821,7 @@
 							"name": "MIMSExcel",
 							"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> MIMSExcel",
 							"dataset": {
-								"referenceName": "MIMSExcel_Nov30_2021",
+								"referenceName": "MIMSExcel",
 								"type": "DatasetReference"
 							}
 						}
@@ -467,7 +831,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/MIMSExcel_Nov30_2021')]"
+				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]"
 			]
 		},
 		{
@@ -475,6 +839,7 @@
 			"type": "Microsoft.DataFactory/factories/credentials",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "Active Directory credentials ",
 				"type": "ManagedIdentity",
 				"typeProperties": {
 					"resourceId": "/subscriptions/5e4be3e5-0651-45cc-928f-1d9067cc4e52/resourcegroups/AOP/providers/Microsoft.ManagedIdentity/userAssignedIdentities/SMPKPIDataFactoryManagedIdentity"
