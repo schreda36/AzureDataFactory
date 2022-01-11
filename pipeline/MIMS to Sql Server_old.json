@@ -26,7 +26,10 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "MIMS to tblService",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"Datasource": "'test'"
+						}
 					},
 					"compute": {
 						"coreCount": 8,
