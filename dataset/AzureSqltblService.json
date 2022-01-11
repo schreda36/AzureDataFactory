@@ -93,6 +93,10 @@
 				"name": "ServiceID",
 				"type": "int",
 				"precision": 10
+			},
+			{
+				"name": "Datasource",
+				"type": "nvarchar"
 			}
 		],
 		"typeProperties": {
