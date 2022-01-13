@@ -51,7 +51,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Delete tblService Rows_copy1",
+						"referenceName": "Delete tblService Rows",
 						"type": "DataFlowReference"
 					},
 					"compute": {
