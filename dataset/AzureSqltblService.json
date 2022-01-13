@@ -58,19 +58,27 @@
 			},
 			{
 				"name": "SchPickUpDate",
-				"type": "nvarchar"
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
 			},
 			{
 				"name": "ActualPickUpDate",
-				"type": "nvarchar"
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
 			},
 			{
 				"name": "SchDeliveryDate",
-				"type": "nvarchar"
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
 			},
 			{
 				"name": "ActualDeliveryDate",
-				"type": "nvarchar"
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
 			},
 			{
 				"name": "RouteNum",
