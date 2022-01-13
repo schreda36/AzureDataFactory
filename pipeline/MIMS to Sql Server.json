@@ -6,7 +6,14 @@
 			{
 				"name": "Get File Metadata",
 				"type": "GetMetadata",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Delete tblService Rows_copy1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -58,6 +65,157 @@
 								"value": "@activity('Get File Metadata').output.itemName",
 								"type": "Expression"
 							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Copy MIMSxls to Archive",
+				"description": "Copy new and changed files only by using LastModifiedDate",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "MIMS Insert to tblService",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": false,
+							"modifiedDatetimeStart": {
+								"value": "@{pipeline().parameters.LastModified_From}",
+								"type": "Expression"
+							},
+							"modifiedDatetimeEnd": {
+								"value": "@{pipeline().parameters.LastModified_To}",
+								"type": "Expression"
+							},
+							"deleteFilesAfterCompletion": false
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"logSettings": {
+						"enableCopyActivityLog": true,
+						"copyActivityLogSettings": {
+							"logLevel": "Warning",
+							"enableReliableLogging": false
+						},
+						"logLocationSettings": {
+							"linkedServiceName": {
+								"referenceName": "smpkpi",
+								"type": "LinkedServiceReference"
+							},
+							"path": "processlogs"
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "BlobStorageRoot",
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "@pipeline().parameters.FolderPath_Source"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "BlobArchive_Binary",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Cleanup_Archive",
+				"description": "delete \"Processed_\" files, maybe add rule for deleting only \"older than xx/xx\" or limit to 15 latest files",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Copy MIMSxls to Archive",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "BlobArchive_Binary",
+						"type": "DatasetReference"
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "smpkpi",
+							"type": "LinkedServiceReference"
+						},
+						"path": "processlogs"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": false,
+						"modifiedDatetimeEnd": {
+							"value": "@{addDays(pipeline().TriggerTime, -30)}",
+							"type": "Expression"
+						},
+						"wildcardFileName": "*",
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "Delete tblService Rows_copy1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "Delete tblService Rows",
+						"type": "DataFlowReference",
+						"parameters": {
+							"MinSchPickUpDate": "\"2021-10-30 00:00:00.000\"",
+							"MaxSchPickUpDate": "\"2021-10-30 23:45:00.000\""
 						}
 					},
 					"compute": {
