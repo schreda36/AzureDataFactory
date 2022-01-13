@@ -218,7 +218,7 @@
 						}
 					},
 					{
-						"name": "MIMS to tblService",
+						"name": "MIMS Insert to tblService",
 						"type": "ExecuteDataFlow",
 						"dependsOn": [
 							{
@@ -238,7 +238,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"dataflow": {
-								"referenceName": "MIMS to tblService",
+								"referenceName": "MIMS Insert to tblService",
 								"type": "DataFlowReference",
 								"parameters": {
 									"Datasource": {
@@ -268,11 +268,238 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]",
-				"[concat(variables('factoryId'), '/dataflows/MIMS to tblService')]"
+				"[concat(variables('factoryId'), '/dataflows/MIMS Insert to tblService')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureSqltblService')]",
+			"name": "[concat(parameters('factoryName'), '/test delete')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "process MIMS xls from blob to SqlDB tblService",
+				"activities": [
+					{
+						"name": "Delete tblService Rows_copy1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "Delete tblService Rows",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"tblServiceBeforeDel": {},
+									"MIMS": {},
+									"tblService": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/Delete tblService Rows')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BlobArchive_Binary')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "smpkpi",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "archive"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BlobStorageRoot')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data source store. ",
+				"linkedServiceName": {
+					"referenceName": "smpkpi",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Container": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": {
+							"value": "@dataset().Container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MIMSExcel')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "smpkpi",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Excel",
+				"typeProperties": {
+					"sheetName": "Sheet1",
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "Core_KPI_File_allloads_Nov01_2021_to_Nov30_2021.xlsx",
+						"container": "mims"
+					},
+					"firstRowAsHeader": true
+				},
+				"schema": [
+					{
+						"name": "CoopID",
+						"type": "String"
+					},
+					{
+						"name": "CoopName",
+						"type": "String"
+					},
+					{
+						"name": "ProdID",
+						"type": "String"
+					},
+					{
+						"name": "ProdName",
+						"type": "String"
+					},
+					{
+						"name": "ManifestNum",
+						"type": "String"
+					},
+					{
+						"name": "LT_No",
+						"type": "String"
+					},
+					{
+						"name": "CustID",
+						"type": "String"
+					},
+					{
+						"name": "CustName",
+						"type": "String"
+					},
+					{
+						"name": "HaulerID",
+						"type": "String"
+					},
+					{
+						"name": "HaulerName",
+						"type": "String"
+					},
+					{
+						"name": "ScaleHeavy",
+						"type": "String"
+					},
+					{
+						"name": "SchPickUpDate",
+						"type": "String"
+					},
+					{
+						"name": "ActualPickUpDate",
+						"type": "String"
+					},
+					{
+						"name": "SchDeliveryDate",
+						"type": "String"
+					},
+					{
+						"name": "ActualDeliveryDate",
+						"type": "String"
+					},
+					{
+						"name": "RouteNum",
+						"type": "String"
+					},
+					{
+						"name": "Rejected",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MimsArchive')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "Connection to your data destination store.  ",
+				"linkedServiceName": {
+					"referenceName": "smpkpi",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": {
+							"value": "archive",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "mims",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Stage_tblService')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -390,180 +617,121 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/BlobArchive_Binary')]",
+			"name": "[concat(parameters('factoryName'), '/a_tblService')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "smpkpi",
+					"referenceName": "KPISqlDB",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "archive"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/BlobStorageRoot')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your data source store. ",
-				"linkedServiceName": {
-					"referenceName": "smpkpi",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"Container": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": {
-							"value": "@dataset().Container",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MIMSExcel')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "smpkpi",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Excel",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "mims"
-					},
-					"sheetIndex": 0,
-					"firstRowAsHeader": true
-				},
+				"type": "AzureSqlTable",
 				"schema": [
 					{
 						"name": "CoopID",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "CoopName",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "ProdID",
-						"type": "String"
+						"type": "float",
+						"precision": 15
 					},
 					{
 						"name": "ProdName",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "ManifestNum",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "LT_No",
-						"type": "String"
+						"type": "float",
+						"precision": 15
 					},
 					{
 						"name": "CustID",
-						"type": "String"
+						"type": "float",
+						"precision": 15
 					},
 					{
 						"name": "CustName",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "HaulerID",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "HaulerName",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "ScaleHeavy",
-						"type": "String"
+						"type": "float",
+						"precision": 15
 					},
 					{
 						"name": "SchPickUpDate",
-						"type": "String"
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					},
 					{
 						"name": "ActualPickUpDate",
-						"type": "String"
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					},
 					{
 						"name": "SchDeliveryDate",
-						"type": "String"
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					},
 					{
 						"name": "ActualDeliveryDate",
-						"type": "String"
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					},
 					{
 						"name": "RouteNum",
-						"type": "String"
+						"type": "nvarchar"
 					},
 					{
 						"name": "Rejected",
-						"type": "String"
+						"type": "float",
+						"precision": 15
+					},
+					{
+						"name": "ServiceID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Datasource",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Updated",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
 					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/MimsArchive')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"description": "Connection to your data destination store.  ",
-				"linkedServiceName": {
-					"referenceName": "smpkpi",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "Binary",
+				],
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": {
-							"value": "archive",
-							"type": "Expression"
-						},
-						"container": {
-							"value": "mims",
-							"type": "Expression"
-						}
-					}
+					"schema": "dbo",
+					"table": "_tblService"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
+				"[concat(variables('factoryId'), '/linkedServices/KPISqlDB')]"
 			]
 		},
 		{
@@ -690,7 +858,64 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/MIMS to tblService')]",
+			"name": "[concat(parameters('factoryName'), '/Delete tblService Rows')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "a_tblService",
+								"type": "DatasetReference"
+							},
+							"name": "tblServiceBeforeDel"
+						},
+						{
+							"dataset": {
+								"referenceName": "MIMSExcel",
+								"type": "DatasetReference"
+							},
+							"name": "MIMS"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "a_tblService",
+								"type": "DatasetReference"
+							},
+							"name": "tblService"
+						}
+					],
+					"transformations": [
+						{
+							"name": "AlterRow2"
+						},
+						{
+							"name": "SchPickUpDatetoDate"
+						},
+						{
+							"name": "SchPickUpDate"
+						},
+						{
+							"name": "MinMaxSchPickUpDates"
+						},
+						{
+							"name": "Exists1"
+						}
+					],
+					"script": "parameters{\n\tMinSchPickUpDate as string (\"2021-10-30 00:00:00.000\"),\n\tMaxSchPickUpDate as string (\"2021-10-30 23:45:00.000\")\n}\nsource(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as double,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as double,\n\t\tCustID as double,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as double,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as double,\n\t\tServiceID as integer,\n\t\tDatasource as string,\n\t\tUpdated as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> tblServiceBeforeDel\nsource(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as string,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as string,\n\t\tCustID as string,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as string,\n\t\tSchPickUpDate as string,\n\t\tActualPickUpDate as string,\n\t\tSchDeliveryDate as string,\n\t\tActualDeliveryDate as string,\n\t\tRouteNum as string,\n\t\tRejected as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true) ~> MIMS\nExists1 alterRow(deleteIf(SchPickUpDate>=toTimestamp($MinSchPickUpDate,\"yyyy-MM-dd HH:mm:ss.SSS\")&&SchPickUpDate<=toTimestamp($MaxSchPickUpDate,\"yyyy-MM-dd HH:mm:ss.SSS\"))) ~> AlterRow2\nSchPickUpDate derive(SchPickUpDate = iif(length(SchPickUpDate)>10, toTimestamp(SchPickUpDate,\"yyyy-MM-dd\\'T\\'HH:mm:ss\"), toTimestamp(concat(SchPickUpDate,\"T00:00:00.000Z\"),\"yyyy-MM-dd\\'T\\'HH:mm:ss\")   )) ~> SchPickUpDatetoDate\nMIMS select(mapColumn(\n\t\tSchPickUpDate\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> SchPickUpDate\nSchPickUpDatetoDate aggregate(minSchPickUpDate = min(SchPickUpDate),\n\t\tmaxSchPickUpDate = max(SchPickUpDate)) ~> MinMaxSchPickUpDates\ntblServiceBeforeDel, MinMaxSchPickUpDates exists(SchPickUpDate>=minSchPickUpDate && SchPickUpDate<=maxSchPickUpDate,\n\tnegate:false,\n\tbroadcast: 'auto')~> Exists1\nAlterRow2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as double,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as double,\n\t\tCustID as double,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as double,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as double,\n\t\tServiceID as integer,\n\t\tDatasource as string,\n\t\tUpdated as timestamp\n\t),\n\tdeletable:true,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:false,\n\tkeys:['ServiceID'],\n\tskipKeyWrites:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tCoopID,\n\t\tCoopName,\n\t\tProdID,\n\t\tProdName,\n\t\tManifestNum,\n\t\tLT_No,\n\t\tCustID,\n\t\tCustName,\n\t\tHaulerID,\n\t\tHaulerName,\n\t\tScaleHeavy,\n\t\tSchPickUpDate,\n\t\tActualPickUpDate,\n\t\tSchDeliveryDate,\n\t\tActualDeliveryDate,\n\t\tRouteNum,\n\t\tRejected,\n\t\tServiceID,\n\t\tDatasource,\n\t\tUpdated\n\t)) ~> tblService"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/a_tblService')]",
+				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/MIMS Insert to tblService')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -708,7 +933,7 @@
 					"sinks": [
 						{
 							"dataset": {
-								"referenceName": "AzureSqltblService",
+								"referenceName": "a_tblService",
 								"type": "DatasetReference"
 							},
 							"name": "tblService",
@@ -720,15 +945,15 @@
 					],
 					"transformations": [
 						{
-							"name": "UpdatedTimestamp"
+							"name": "DateConversions"
 						}
 					],
-					"script": "parameters{\n\tDatasource as string\n}\nsource(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as float,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as float,\n\t\tCustID as float,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as float,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp 'yyyy-MM-dd',\n\t\tRouteNum as string,\n\t\tRejected as float\n\t),\n\tallowSchemaDrift: false,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\trowUrlColumn: 'Datasource',\n\twildcardPaths:['*.xlsx']) ~> MIMSservice\nMIMSservice derive(Updated = currentTimestamp()) ~> UpdatedTimestamp\nUpdatedTimestamp sink(allowSchemaDrift: false,\n\tvalidateSchema: true,\n\tinput(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as double,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as double,\n\t\tCustID as double,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as double,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as double,\n\t\tServiceID as integer,\n\t\tDatasource as string,\n\t\tUpdated as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tdateFormat:'yyyy-mm-dd',\n\ttimestampFormat:'00:00:00',\n\tbooleanFormat: ['1', '0'],\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'allErrors',\n\toutputRejectedData: true,\n\trejectedData_container: 'processlogs',\n\trejectedData_folderPath: 'rejectedRecords',\n\ttransactionCommit: 'single',\n\treportSuccessOnError: true,\n\tmapColumn(\n\t\tCoopID,\n\t\tCoopName,\n\t\tProdID,\n\t\tProdName,\n\t\tManifestNum,\n\t\tLT_No,\n\t\tCustID,\n\t\tCustName,\n\t\tHaulerID,\n\t\tHaulerName,\n\t\tScaleHeavy,\n\t\tSchPickUpDate,\n\t\tActualPickUpDate,\n\t\tSchDeliveryDate,\n\t\tActualDeliveryDate,\n\t\tRouteNum,\n\t\tRejected,\n\t\tDatasource,\n\t\tUpdated\n\t)) ~> tblService"
+					"script": "parameters{\n\tDatasource as string\n}\nsource(output(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as float,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as float,\n\t\tCustID as float,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as float,\n\t\tSchPickUpDate as string,\n\t\tActualPickUpDate as string,\n\t\tSchDeliveryDate as string,\n\t\tActualDeliveryDate as string,\n\t\tRouteNum as string,\n\t\tRejected as float\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\trowUrlColumn: 'Datasource',\n\twildcardPaths:['*.xlsx']) ~> MIMSservice\nMIMSservice derive(Updated = currentTimestamp(),\n\t\tSchPickUpDate = iif(length(SchPickUpDate)>10, toTimestamp(SchPickUpDate,\"yyyy-MM-dd\\'T\\'HH:mm:ss\"), toTimestamp(concat(SchPickUpDate,\"T00:00:00.000Z\"),\"yyyy-MM-dd\\'T\\'HH:mm:ss\")   ),\n\t\tActualPickUpDate = iif(length(ActualPickUpDate)>10, toTimestamp(ActualPickUpDate,\"yyyy-MM-dd\\'T\\'HH:mm:ss\"), toTimestamp(concat(ActualPickUpDate,\"T00:00:00.000Z\"),\"yyyy-MM-dd\\'T\\'HH:mm:ss\")   ),\n\t\tSchDeliveryDate = iif(length(SchDeliveryDate)>10, toTimestamp(SchDeliveryDate,\"yyyy-MM-dd\\'T\\'HH:mm:ss\"), toTimestamp(concat(SchDeliveryDate,\"T00:00:00.000Z\"),\"yyyy-MM-dd\\'T\\'HH:mm:ss\")   ),\n\t\tActualDeliveryDate = iif(length(ActualDeliveryDate)>10, toTimestamp(ActualDeliveryDate,\"yyyy-MM-dd\\'T\\'HH:mm:ss\"), toTimestamp(concat(ActualDeliveryDate,\"T00:00:00.000Z\"),\"yyyy-MM-dd\\'T\\'HH:mm:ss\")   )) ~> DateConversions\nDateConversions sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tCoopID as string,\n\t\tCoopName as string,\n\t\tProdID as double,\n\t\tProdName as string,\n\t\tManifestNum as string,\n\t\tLT_No as double,\n\t\tCustID as double,\n\t\tCustName as string,\n\t\tHaulerID as string,\n\t\tHaulerName as string,\n\t\tScaleHeavy as double,\n\t\tSchPickUpDate as timestamp,\n\t\tActualPickUpDate as timestamp,\n\t\tSchDeliveryDate as timestamp,\n\t\tActualDeliveryDate as timestamp,\n\t\tRouteNum as string,\n\t\tRejected as double,\n\t\tServiceID as integer,\n\t\tDatasource as string,\n\t\tUpdated as timestamp\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tdateFormat:'yyyy-MM-dd',\n\ttimestampFormat:'HH:mm:ss',\n\tbooleanFormat: ['1', '0'],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'allErrors',\n\toutputRejectedData: true,\n\trejectedData_container: 'processlogs',\n\trejectedData_folderPath: 'rejectedRecords',\n\ttransactionCommit: 'single',\n\treportSuccessOnError: true,\n\tmapColumn(\n\t\tCoopID,\n\t\tCoopName,\n\t\tProdID,\n\t\tProdName,\n\t\tManifestNum,\n\t\tLT_No,\n\t\tCustID,\n\t\tCustName,\n\t\tHaulerID,\n\t\tHaulerName,\n\t\tScaleHeavy,\n\t\tSchPickUpDate,\n\t\tActualPickUpDate,\n\t\tSchDeliveryDate,\n\t\tActualDeliveryDate,\n\t\tRouteNum,\n\t\tRejected,\n\t\tDatasource,\n\t\tUpdated\n\t)) ~> tblService"
 				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/MIMSExcel')]",
-				"[concat(variables('factoryId'), '/datasets/AzureSqltblService')]",
+				"[concat(variables('factoryId'), '/datasets/a_tblService')]",
 				"[concat(variables('factoryId'), '/linkedServices/smpkpi')]"
 			]
 		},
