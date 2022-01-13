@@ -50,16 +50,6 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "MIMS to tblService",
-						"type": "DataFlowReference",
-						"parameters": {
-							"Datasource": {
-								"value": "@activity('Get File Metadata').output.itemName",
-								"type": "Expression"
-							}
-						}
-					},
 					"compute": {
 						"coreCount": 8,
 						"computeType": "General"
