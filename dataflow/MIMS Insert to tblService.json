@@ -1,5 +1,5 @@
 {
-	"name": "MIMS to tblService",
+	"name": "MIMS Insert to tblService",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
