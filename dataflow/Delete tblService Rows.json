@@ -1,5 +1,5 @@
 {
-	"name": "Delete tblService Rows_copy1",
+	"name": "Delete tblService Rows",
 	"properties": {
 		"type": "MappingDataFlow",
 		"typeProperties": {
