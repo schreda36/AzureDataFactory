@@ -1,5 +1,5 @@
 {
-	"name": "AzureSqltblService",
+	"name": "a_tblService",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "KPISqlDB",
@@ -107,7 +107,7 @@
 		],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "Stage_tblService"
+			"table": "_tblService"
 		}
 	}
 }
