@@ -42,7 +42,21 @@
 							"type": "AzureBlobStorageWriteSettings"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"logSettings": {
+						"enableCopyActivityLog": true,
+						"copyActivityLogSettings": {
+							"logLevel": "Warning",
+							"enableReliableLogging": false
+						},
+						"logLocationSettings": {
+							"linkedServiceName": {
+								"referenceName": "smpkpi",
+								"type": "LinkedServiceReference"
+							},
+							"path": "processlogs"
+						}
+					}
 				},
 				"inputs": [
 					{
