@@ -8,7 +8,7 @@
 				"type": "GetMetadata",
 				"dependsOn": [
 					{
-						"activity": "Delete tblService Rows_copy1",
+						"activity": "Delete tblService Rows",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -198,7 +198,7 @@
 				}
 			},
 			{
-				"name": "Delete tblService Rows_copy1",
+				"name": "Delete tblService Rows",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -212,11 +212,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Delete tblService Rows",
-						"type": "DataFlowReference",
-						"parameters": {
-							"MinSchPickUpDate": "\"2021-10-30 00:00:00.000\"",
-							"MaxSchPickUpDate": "\"2021-10-30 23:45:00.000\""
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
@@ -226,6 +222,17 @@
 				}
 			}
 		],
+		"parameters": {
+			"LastModified_From": {
+				"type": "string"
+			},
+			"LastModified_To": {
+				"type": "string"
+			},
+			"FolderPath_Source": {
+				"type": "string"
+			}
+		},
 		"annotations": []
 	}
 }
