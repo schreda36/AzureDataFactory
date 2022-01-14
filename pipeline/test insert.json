@@ -106,17 +106,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"LastModified_From": {
-				"type": "string"
-			},
-			"LastModified_To": {
-				"type": "string"
-			},
-			"FolderPath_Source": {
-				"type": "string"
-			}
-		},
 		"annotations": []
 	}
 }
