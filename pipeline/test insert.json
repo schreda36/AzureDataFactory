@@ -1,0 +1,122 @@
+{
+	"name": "test insert",
+	"properties": {
+		"description": "process MIMS xls from blob to SqlDB tblService",
+		"activities": [
+			{
+				"name": "Get File Metadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "MIMSExcel",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"itemName"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "MIMS Insert to tblService",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Get File Metadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "MIMS Insert to tblService",
+						"type": "DataFlowReference",
+						"parameters": {
+							"Datasource": {
+								"value": "@activity('Get File Metadata').output.itemName",
+								"type": "Expression"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Cleanup_Archive",
+				"description": "delete \"Processed_\" files, maybe add rule for deleting only \"older than xx/xx\" or limit to 15 latest files",
+				"type": "Delete",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "BlobArchive_Binary",
+						"type": "DatasetReference"
+					},
+					"logStorageSettings": {
+						"linkedServiceName": {
+							"referenceName": "smpkpi",
+							"type": "LinkedServiceReference"
+						},
+						"path": "processlogs"
+					},
+					"enableLogging": true,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": false,
+						"modifiedDatetimeEnd": {
+							"value": "@{addDays(pipeline().TriggerTime, -30)}",
+							"type": "Expression"
+						},
+						"wildcardFileName": "*",
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"parameters": {
+			"LastModified_From": {
+				"type": "string"
+			},
+			"LastModified_To": {
+				"type": "string"
+			},
+			"FolderPath_Source": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
