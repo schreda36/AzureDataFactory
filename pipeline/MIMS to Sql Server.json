@@ -78,7 +78,7 @@
 				}
 			},
 			{
-				"name": "Copy MIMSxls to Archive",
+				"name": "Copy MIMS to Archive",
 				"description": "Copy new and changed files only by using LastModifiedDate",
 				"type": "Copy",
 				"dependsOn": [
@@ -161,7 +161,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "Copy MIMSxls to Archive",
+						"activity": "Copy MIMS to Archive",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -235,7 +235,8 @@
 				"defaultValue": "2099-03-01T00:00:00Z"
 			},
 			"FolderPath_Source": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "mims"
 			}
 		},
 		"annotations": []
