@@ -1,10 +1,10 @@
 {
-	"name": "Copy Source to Archive",
+	"name": "test Copy Source to Archive",
 	"properties": {
 		"description": "Copy new and changed files only by using LastModifiedDate",
 		"activities": [
 			{
-				"name": "Copy MIMSxls to Archive",
+				"name": "Copy MIMS to Archive",
 				"description": "Copy new and changed files only by using LastModifiedDate",
 				"type": "Copy",
 				"dependsOn": [],
@@ -80,7 +80,7 @@
 				"type": "Delete",
 				"dependsOn": [
 					{
-						"activity": "Copy MIMSxls to Archive",
+						"activity": "Copy MIMS to Archive",
 						"dependencyConditions": [
 							"Succeeded"
 						]
