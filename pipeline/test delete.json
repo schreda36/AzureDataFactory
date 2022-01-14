@@ -4,7 +4,7 @@
 		"description": "process MIMS xls from blob to SqlDB tblService",
 		"activities": [
 			{
-				"name": "Delete tblService Rows_copy1",
+				"name": "Delete tblService Rows",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -18,7 +18,11 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "Delete tblService Rows",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"MinSchPickUpDateParam": "\"2021-10-30 00:00:00.000\"",
+							"MaxSchPickUpDateParam": "\"2021-10-30 23:45:00.000\""
+						}
 					},
 					"compute": {
 						"coreCount": 8,
