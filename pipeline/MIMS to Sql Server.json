@@ -224,10 +224,12 @@
 		],
 		"parameters": {
 			"LastModified_From": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "2022-01-01T00:00:00Z"
 			},
 			"LastModified_To": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "2099-03-01T00:00:00Z"
 			},
 			"FolderPath_Source": {
 				"type": "string"
